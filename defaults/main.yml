@@ -1,0 +1,10 @@
+---
+# defaults file for prometheus
+
+prometheus_build_folder: /tmp/prometheus
+prometheus_user: prometheus
+prometheus_group: prometheus
+prometheus_service_name: prometheus
+prometheus_install_dir: /opt/prometheus
+prometheus_conf_dir: /etc/prometheus
+prometheus_log_dir: /var/log/prometheus

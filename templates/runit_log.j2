@@ -1,0 +1,5 @@
+#!/bin/sh
+
+exec chpst -u {{ service_user }} svlogd -tt /var/log/{{ service_name }}
+
+

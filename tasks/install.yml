@@ -1,0 +1,52 @@
+---
+
+- name: create prometheus group
+  group:
+    name={{ prometheus_group }}
+    state=present
+    system=yes
+
+- name: create prometheus user
+  user:
+    name={{  prometheus_user }}
+    group={{ prometheus_group }}
+    system=yes
+    createhome=no
+
+- name: install - checkout prometheus from github.com
+  git:
+    repo=https://github.com/prometheus/prometheus
+    dest={{ prometheus_build_folder }}
+
+- name: make prometheus
+  command: make build
+  args:
+    chdir: "{{ prometheus_build_folder }}"
+      
+
+- name: make directories
+  file: 
+    state=directory
+    path={{ item }}
+    owner={{ prometheus_user }}
+    group={{ prometheus_group }}
+    mode=0755
+  with_items:
+    - /etc/prometheus
+    - /opt/prometheus
+    - /var/log/prometheus
+
+- name: move binary
+  command: mv {{ prometheus_build_folder }}/prometheus /opt/prometheus/
+  args:
+    creates: /opt/prometheus/prometheus
+
+- name: setup config
+  template:
+    src=prometheus.conf.j2
+    dest=/etc/prometheus/prometheus.conf
+    owner={{ prometheus_user }}
+    group={{ prometheus_group }}
+    mode=0744
+
+

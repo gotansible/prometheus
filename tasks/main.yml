@@ -1,0 +1,17 @@
+---
+# tasks file for prometheus
+
+
+- include: depend.yml
+
+- include: install.yml
+
+- name: consul - service
+  include: runit_service.yml
+  vars:
+    service_name: "{{ prometheus_service_name }}"
+    service_user: "{{ prometheus_user }}"
+    service_command: "{{ prometheus_install_dir }}/prometheus -config.file=/etc/prometheus/prometheus.conf "
+    service_env_vars:
+      GOMAXPROCS: "{{ansible_processor_cores + 1}}"
+
