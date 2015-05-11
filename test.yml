@@ -1,5 +1,30 @@
 ---
 - hosts: all
   sudo: true
+  vars:
+    prometheus_global_labels:
+      a: b
+      c: d
+    prometheus_rule_files:
+      - my.rules
+      - dude.rules
+    prometheus_sd_jobs:
+      - job:
+        name: 'api-server'
+        scrape_interval: '5s'
+        scrape_timeout: '10s'
+        sd_name: 'dns.resovl.name.prod'
+        sd_refresh_interval: '30s'
+        metrics_path: '/metrics'
+    prometheus_target_jobs:
+      - job:
+        name: 'api-server'
+        scrape_interval: '5s'
+        scrape_timeout: '10s'
+        target_group:
+        - target: "http://localhost:9090/metrics"
+          labels:
+            a: b
+            c: d'
   roles:
     - role: prometheus

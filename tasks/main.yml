@@ -6,6 +6,8 @@
 
 - include: install.yml
 
+- include: config.yml
+
 - name: consul - service
   include: runit_service.yml
   vars:

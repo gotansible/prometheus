@@ -1,33 +1,83 @@
 # Global default settings.
 global {
-  scrape_interval: "15s"     # By default, scrape targets every 15 seconds.
-  evaluation_interval: "15s" # By default, evaluate rules every 15 seconds.
+	scrape_interval: '{{prometheus_global_scrape_interval}}'     # By default, scrape targets every 15 seconds.
+	evaluation_interval: '{{ prometheus_global_evaluation_interval }}' # By default, evaluate rules every 15 seconds.
 
+  {% if prometheus_global_labels and prometheus_global_labels|count > 0 %}
   # Attach these extra labels to all timeseries collected by this Prometheus instance.
-  labels: {
-    label: {
-      name: "monitor"
-      value: "codelab-monitor"
-    }
-  }
+	labels: {
+{% for k,v in prometheus_global_labels.iteritems()  %}
+		label: {
+		name: "{{ k }}"
+		value: "{{ v }}"
+		}
+{% endfor %}
+{% endif %}
+	}
 
   # Load and evaluate rules in this file every 'evaluation_interval' seconds. This field may be repeated.
-  #rule_file: "prometheus.rules"
+{% if prometheus_rule_files and prometheus_rule_files|count > 0 %}
+{% for file in prometheus_rule_files %}
+	rule_file: '{{ file }}'
+{% endfor%}
+{% endif %}
 }
 
 # A job definition containing exactly one endpoint to scrape: Here it's prometheus itself.
 job: {
-  # The job name is added as a label `job={job-name}` to any timeseries scraped from this job.
-  name: "prometheus"
-  # Override the global default and scrape targets from this job every 5 seconds.
-  scrape_interval: "5s"
-
-  # Let's define a group of targets to scrape for this job. In this case, only one.
-  target_group: {
-    # These endpoints are scraped via HTTP.
-    target: "http://localhost:9090/metrics"
-  }
+	# The job name is added as a label `job={job-name}` to any timeseries scraped from this job.
+	name: "prometheus"
+	# Override the global default and scrape targets from this job every 5 seconds.
+	scrape_interval: "5s"
+	
+	# Let's define a group of targets to scrape for this job. In this case, only one.
+	target_group: {
+	  # These endpoints are scraped via HTTP.
+	  target: "http://localhost:9090/metrics"
+	}
 }
+
+{% for job in prometheus_sd_jobs %}
+job: {
+	name: '{{ job.name }}'
+{% if job.scrape_interval %}	scrape_interval: '{{job.scrape_interval}}'{% endif%}
+
+{% if job.scrape_timeout %}	scrape_timeout: '{{job.scrape_timeout}}'{% endif%}
+
+{% if job.sd_name %}	sd_name: '{{ job.sd_name }}'{% endif%}
+
+{% if job.sd_refresh_interval %}	sd_refresh_interval: '{{job.sd_refresh_interval}}'{% endif%}
+
+{% if job.metrics_path %}	metrics_path: '{{job.metrics_path}}'{% endif%}
+
+}
+{% endfor %}
+
+{% for job in prometheus_target_jobs %}
+job: {
+	name: '{{ job.name }}'
+{% if job.scrape_interval %}	scrape_interval: '{{job.scrape_interval}}'{% endif%}
+
+{% if job.scrape_timeout %}	scrape_timeout: '{{job.scrape_timeout}}'{% endif%}
+
+	target_group: {
+{% for item in job.target_group %}
+		target: '{{ item.target }}'
+{% if item.labels and item.labels|count > 0 %}
+		labels: {
+{% for k,v in item.labels.iteritems()  %}
+			label: {
+			name: "{{ k }}"
+			value: "{{ v }}"
+			}
+{% endfor %}
+{% endif %}
+		}
+{% endfor %}
+	}
+}
+{% endfor %}
+
 
 ## Monitor a set of a API servers.
 #job {

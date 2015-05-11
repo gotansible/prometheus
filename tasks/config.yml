@@ -1,0 +1,9 @@
+---
+
+- name: configure
+  template: 
+    src: prometheus.conf.j2
+    dest: "{{ prometheus_conf_dir }}/prometheus.conf"
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    mode: 0644

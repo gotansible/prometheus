@@ -13,6 +13,10 @@
     system=yes
     createhome=no
 
+- name: already installed check
+  stat: path={{ prometheus_install_dir }}/prometheus
+  register: binary_file
+
 - name: install - checkout prometheus from github.com
   git:
     repo=https://github.com/prometheus/prometheus
@@ -22,7 +26,7 @@
   command: make build
   args:
     chdir: "{{ prometheus_build_folder }}"
-      
+  when: not binary_file.stat.exists
 
 - name: make directories
   file: 
@@ -37,16 +41,8 @@
     - /var/log/prometheus
 
 - name: move binary
-  command: mv {{ prometheus_build_folder }}/prometheus /opt/prometheus/
+  command: mv {{ prometheus_build_folder }}/prometheus {{ prometheus_install_dir }}/
   args:
     creates: /opt/prometheus/prometheus
-
-- name: setup config
-  template:
-    src=prometheus.conf.j2
-    dest=/etc/prometheus/prometheus.conf
-    owner={{ prometheus_user }}
-    group={{ prometheus_group }}
-    mode=0744
 
 
