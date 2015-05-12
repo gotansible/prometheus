@@ -19,7 +19,7 @@
 
 - name: install - checkout prometheus from github.com
   git:
-    repo=https://github.com/prometheus/prometheus
+    repo={{ prometheus_repo }}
     dest={{ prometheus_build_folder }}
 
 - name: make prometheus
@@ -29,20 +29,20 @@
   when: not binary_file.stat.exists
 
 - name: make directories
-  file: 
+  file:
     state=directory
     path={{ item }}
     owner={{ prometheus_user }}
     group={{ prometheus_group }}
     mode=0755
   with_items:
-    - /etc/prometheus
-    - /opt/prometheus
-    - /var/log/prometheus
+    - "{{ prometheus_conf_dir }}"
+    - "{{ prometheus_log_dir }}"
+    - "{{ prometheus_install_dir }}"
 
 - name: move binary
   command: mv {{ prometheus_build_folder }}/prometheus {{ prometheus_install_dir }}/
   args:
-    creates: /opt/prometheus/prometheus
+    creates: "{{ prometheus_install_dir }}/prometheus"
 
 

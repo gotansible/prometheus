@@ -1,7 +1,7 @@
 ---
 
-- name: configure
-  template: 
+- name: configure prometheus
+  template:
     src: prometheus.conf.j2
     dest: "{{ prometheus_conf_dir }}/prometheus.conf"
     owner: "{{ prometheus_user }}"

@@ -63,9 +63,10 @@ job: {
 	target_group: {
 {% for item in job.target_group %}
 		target: '{{ item.target }}'
-{% if item.labels and item.labels|count > 0 %}
+{% endfor %}
+{% if job.labels and job.labels|count > 0 %}
 		labels: {
-{% for k,v in item.labels.iteritems()  %}
+{% for k,v in job.labels.iteritems()  %}
 			label: {
 			name: "{{ k }}"
 			value: "{{ v }}"
@@ -73,7 +74,6 @@ job: {
 {% endfor %}
 {% endif %}
 		}
-{% endfor %}
 	}
 }
 {% endfor %}
