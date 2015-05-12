@@ -7,5 +7,6 @@
     - curl
     - gzip
     - git
+    - mercurial
   when: ansible_os_family == 'Debian'
 
