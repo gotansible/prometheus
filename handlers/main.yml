@@ -3,5 +3,5 @@
 
 - name: restart prometheus
   runit: name={{ prometheus_service_name }} state=up timeout=9 action=reload
-
+  when: not prometheus_service_status.restarted
 

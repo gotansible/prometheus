@@ -19,4 +19,4 @@
     command: "{{ prometheus_install_dir }}/prometheus -config.file=/etc/prometheus/prometheus.conf"
     env_vars:
       GOMAXPROCS: "{{ansible_processor_cores + 1}}"
-
+  register: prometheus_service_status
