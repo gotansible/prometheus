@@ -1,7 +1,7 @@
 ---
 
 - name: install dependencies
-  apt: pkg={{ item }} state=present
+  apt: pkg={{ item }} state=present update_cache=true
   with_items:
     - unzip
     - curl
