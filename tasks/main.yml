@@ -1,6 +1,6 @@
 ---
 
-- name: install depencies
+- name: install dependencies
   include: depend.yml
 
 - name: install prometheus
