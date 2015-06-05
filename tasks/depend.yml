@@ -8,5 +8,6 @@
     - gzip
     - git
     - mercurial
+    - make
   when: ansible_os_family == 'Debian'
 
