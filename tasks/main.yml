@@ -9,14 +9,6 @@
 - name: configure prometheus
   include: config.yml
 
-- name: setup prometheus as runit service and start it
-  runit:
-    name: "{{ prometheus_service_name }}"
-    enabled: true
-    state: up
-    timeout: 9 
-    user: "{{ prometheus_user }}"
-    command: "{{ prometheus_install_dir }}/prometheus -config.file=/etc/prometheus/prometheus.conf"
-    env_vars:
-      GOMAXPROCS: "{{ansible_processor_cores + 1}}"
-  register: prometheus_service_status
+- name: setup service
+  include: service.yml
+
