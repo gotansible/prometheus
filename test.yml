@@ -19,7 +19,7 @@
       scrape_interval: '5s'
       scrape_timeout: '10s'
       consul_sd_configs:
-        - server: "localhost"
+        - server: "localhost:8400"
           datacenter: "dc1"
           scheme: "rpc"
           token: ""
