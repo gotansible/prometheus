@@ -1,12 +1,14 @@
 ---
 - name: setup prometheus as runit service and start it
+  tags:
+    - service
   runit:
     name: "{{ prometheus_service_name }}"
     enabled: true
     state: up
     timeout: 9 
     user: root
-    command: "{{ prometheus_install_dir }}/prometheus -config.file=/etc/prometheus/prometheus.conf"
+    command: "{{ prometheus_install_dir }}/prometheus -config.file={{ prometheus_conf_dir }}/prometheus.conf"
     env_vars:
       GOMAXPROCS: "{{ansible_processor_cores + 1}}"
   register: prometheus_service_status
