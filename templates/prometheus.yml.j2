@@ -56,7 +56,7 @@ scrape_configs:
   {% if job.consul_sd_configs is defined %}
     consul_sd_configs:
     {% for consul in job.consul_sd_configs %}
-      - server: {{ consul.server }}
+      - server: "{{ consul.server }}"
         datacenter: {{ consul.datacenter }}
       {% if consul.scheme | default('') %}
         scheme: {{ consul.scheme }}
