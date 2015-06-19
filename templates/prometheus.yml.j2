@@ -75,7 +75,9 @@ scrape_configs:
           - {{ service }}
         {% endfor %}
         # The string by which Consul tags are joined into the tag label.
+        {% if consul.tag_separator | default('') %}
         tag_separator: "{{ consul.tag_separator }}"
+        {% endif %}
     {% endfor %}
   {% endif %}
 {% endfor %}
