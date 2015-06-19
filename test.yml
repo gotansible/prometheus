@@ -28,3 +28,15 @@
           services:
             - myservicename
           tag_separator: ":"
+
+    - job_name: 'service_from_consul'
+      scrape_interval: 5s
+      scrape_timeout: 10s
+      consul_sd_configs:
+        - server: "localhost"
+          datacenter: taku
+          services:
+            - prometheus_machine
+            - prometheus_haproxy
+          tag_separator: ":"
+
