@@ -1,0 +1,82 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+# http://prometheus.io/docs/operating/configuration/
+
+global:
+  scrape_interval: {{ prometheus_global_scrape_interval }} 
+  scrape_timeout: {{ prometheus_global_scrape_timeout }}
+  evaluation_interval: {{ prometheus_global_evaluation_interval }}
+
+{% if prometheus_global_labels and prometheus_global_labels|count > 0 %}
+  # Attach these extra labels to all timeseries collected by this Prometheus instance.
+  labels:
+  {% for k,v in prometheus_global_labels.iteritems()  %}
+    {{ k }}: "{{ v }}"
+  {% endfor %}
+{% endif %}
+
+  # Load and evaluate rules in this file every 'evaluation_interval' seconds. This field may be repeated.
+{% if prometheus_rule_files is defined and prometheus_rule_files|count > 0 %}
+rule_files:
+  {% for file in prometheus_rule_files %}
+  - '{{ file }}'
+  {% endfor%}
+{% endif %}
+
+scrape_configs:
+  - job_name: "prometheus"
+    scrape_interval: "5s"
+    scheme: http
+    metrics_path: /metrics
+    target_groups:
+      - targets:
+        - "localhost:9090"
+
+{% for job in prometheus_target_jobs %}
+  - job_name: '{{ job.job_name }}'
+  {% if job.scrape_interval %}
+    scrape_interval: {{ job.scrape_interval }}
+  {% endif %}
+  {% if job.scrape_timeout %}
+    scrape_timeout: {{ job.scrape_timeout }}
+  {% endif %}
+  {% if job.metrics_path | default('') %}
+    metrics_path: '{{job.metrics_path}}'
+  {% endif %}
+  {% if job.target_groups is defined %}
+    target_groups:
+      - targets:
+    {% for target in job.target_groups.targets  %}
+        - "{{ target }}"
+    {% endfor %}
+        labels:
+    {% for k, v in job.target_groups.labels.iteritems() %}
+          {{ k }}: {{ v }}
+    {% endfor %}
+  {% endif %}
+  {% if job.consul_sd_configs is defined %}
+    consul_sd_configs:
+    {% for consul in job.consul_sd_configs %}
+      - server: {{ consul.server }}
+        datacenter: {{ consul.datacenter }}
+      {% if consul.scheme | default('') %}
+        scheme: {{ consul.scheme }}
+      {% endif %}
+      {% if consul.token | default('') %}
+        token: {{ consul.token }}
+      {% endif %}
+      {% if consul.username | default('') %}
+        username: {{ consul.username }}
+      {% endif %}
+      {% if consul.password | default('') %}
+        password: {{ consul.password }}
+      {% endif %}
+        services:
+        {% for service in consul.services %}
+          - {{ service }}
+        {% endfor %}
+        # The string by which Consul tags are joined into the tag label.
+        tag_separator: "{{ consul.tag_separator }}"
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+

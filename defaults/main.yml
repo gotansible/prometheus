@@ -12,27 +12,34 @@ prometheus_conf_dir: /etc/prometheus
 prometheus_log_dir: /var/log/prometheus
 
 # ---
-# an example job
-prometheus_global_scrape_interval: 15s
-prometheus_global_evaluation_interval: 15s
+prometheus_global_scrape_interval: 30s
+prometheus_global_scrape_timeout: 10s
+prometheus_global_evaluation_interval: 1m
 prometheus_global_labels: {} # k:v dict
+
 prometheus_rule_files: [] # - filename.rules
-prometheus_sd_jobs: []
-#  - job:
-#    name: 'api-server'
-#    scrape_interval: '5s'
-#    scrape_timeout: '10s'
-#    sd_name: 'dns.resovl.name.prod'
-#    sd_refresh_interval: '30s'
-#    metrics_path: '/metrics'
-#
+
 prometheus_target_jobs: []
-#  - job:
-#    name: 'api-server'
+# an example job
+#  - job_name: 'web-server'
+#      scrape_interval: '5s'
+#      scrape_timeout: '10s'
+#      target_groups:
+#        targets:
+#          - "localhost:9090"
+#        labels:
+#          a: b
+#
+#  - job_name: 'service_from_consul'
 #    scrape_interval: '5s'
 #    scrape_timeout: '10s'
-#    target_group:
-#    - target: "http://localhost:9090/metrics"
-#      labels:
-#        a: b
-#        c: d'
+#    consul_sd_configs:
+#      - server: "localhost"
+#        datacenter: "dc1"
+#        scheme: "rpc"
+#        token: ""
+#        username: ""
+#        password: ""
+#        services:
+#          - myservicename
+#        tag_separator: ":"
