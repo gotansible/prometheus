@@ -33,10 +33,10 @@ scrape_configs:
 
 {% for job in prometheus_target_jobs %}
   - job_name: '{{ job.job_name }}'
-  {% if job.scrape_interval %}
+  {% if job.scrape_interval | default('') %}
     scrape_interval: {{ job.scrape_interval }}
   {% endif %}
-  {% if job.scrape_timeout %}
+  {% if job.scrape_timeout | default('') %}
     scrape_timeout: {{ job.scrape_timeout }}
   {% endif %}
   {% if job.metrics_path | default('') %}
