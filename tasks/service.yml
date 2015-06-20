@@ -5,8 +5,8 @@
   runit:
     name: "{{ prometheus_service_name }}"
     enabled: true
-    state: up
-    timeout: 9 
+    state: start
+    timeout: 9
     user: root
     command: "{{ prometheus_install_dir }}/prometheus -config.file={{ prometheus_conf_dir }}/prometheus.conf"
     env_vars:
